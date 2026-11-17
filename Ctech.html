@@ -1,0 +1,841 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#08090d">
+<title>PRUMIM AI — Intelligent Assistant</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+:root {
+  --bg: #08090d;
+  --panel: #101219;
+  --panel2: #151821;
+  --border: rgba(255,255,255,.08);
+  --text: #f4f5fa;
+  --muted: #858b9c;
+  --accent: #a78bfa;
+  --cyan: #67e8f9;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, sans-serif;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+button, textarea { font: inherit; }
+
+.app {
+  display: flex;
+  height: 100dvh;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+  width: 265px;
+  background: #0c0e14;
+  border-right: 1px solid var(--border);
+  padding: 23px 17px;
+  display: flex;
+  flex-direction: column;
+  transition: .3s;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 35px;
+  padding: 0 7px;
+}
+
+.brand-icon {
+  width: 39px;
+  height: 39px;
+  border-radius: 13px;
+  background: linear-gradient(135deg,#a78bfa,#67e8f9);
+  display: grid;
+  place-items: center;
+  color: #08090d;
+  font-weight: 900;
+  font-size: 20px;
+  box-shadow: 0 0 25px #a78bfa35;
+}
+
+.brand-name {
+  font-family: 'Space Grotesk';
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.brand-name span { color: var(--accent); }
+
+.new-chat {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 14px;
+  color: white;
+  background: linear-gradient(120deg,#8b5cf6,#6366f1);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+.section-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #71788b;
+  padding: 0 10px;
+  margin-bottom: 13px;
+}
+
+.history {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.history-item {
+  padding: 12px;
+  border-radius: 9px;
+  color: #b0b5c4;
+  font-size: 12px;
+  cursor: pointer;
+  margin-bottom: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-item:hover {
+  background: var(--panel2);
+  color: white;
+}
+
+.sidebar-bottom {
+  border-top: 1px solid var(--border);
+  padding-top: 17px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg,#8b5cf6,#06b6d4);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+.profile small {
+  display: block;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* MAIN */
+
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background:
+    radial-gradient(ellipse at 50% 30%,#8b5cf60b,transparent 55%),
+    var(--bg);
+}
+
+.topbar {
+  height: 72px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+}
+
+.top-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.model-name {
+  font-family: 'Space Grotesk';
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.model-status {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  color: #a4aaba;
+  font-size: 11px;
+  margin-top: 5px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  background: #4ade80;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #4ade80;
+}
+
+.top-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.icon-btn {
+  width: 37px;
+  height: 37px;
+  display: grid;
+  place-items: center;
+  color: #aeb3c1;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.icon-btn:hover { color: white; border-color: var(--accent); }
+
+/* CHAT */
+
+.chat-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 30px 18px 20px;
+  scroll-behavior: smooth;
+}
+
+.chat-content {
+  width: 100%;
+  max-width: 790px;
+  margin: auto;
+}
+
+.welcome {
+  text-align: center;
+  padding-top: 10vh;
+  animation: appear .8s ease;
+}
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.orb {
+  width: 100px;
+  height: 100px;
+  margin: auto auto 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%,#e9d5ff,#a78bfa 30%,#6366f1 65%,#111827);
+  box-shadow: 0 0 35px #8b5cf655,0 0 90px #6366f122;
+  position: relative;
+  animation: float 4s ease-in-out infinite;
+}
+
+.orb:after {
+  content: "";
+  position: absolute;
+  inset: -9px;
+  border: 1px solid #a78bfa45;
+  border-radius: 50%;
+  animation: rotate 8s linear infinite;
+}
+
+@keyframes float {
+  50% { transform: translateY(-9px); }
+}
+
+@keyframes rotate {
+  to { transform: rotate(360deg); }
+}
+
+.welcome h1 {
+  font-family: 'Space Grotesk';
+  font-size: clamp(27px,5vw,43px);
+  letter-spacing: -1.8px;
+  margin-bottom: 13px;
+}
+
+.gradient {
+  background: linear-gradient(90deg,#c4b5fd,#67e8f9);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.welcome p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+  max-width: 440px;
+  margin: auto;
+}
+
+.suggestions {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 12px;
+  max-width: 600px;
+  margin: 40px auto;
+}
+
+.suggestion {
+  text-align: left;
+  padding: 17px;
+  background: #11141c;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  cursor: pointer;
+  color: white;
+  transition: .2s;
+}
+
+.suggestion:hover {
+  border-color: #a78bfa80;
+  background: #191a29;
+  transform: translateY(-2px);
+}
+
+.suggestion i { color: var(--accent); }
+
+.suggestion strong {
+  display: block;
+  font-size: 12px;
+  margin: 12px 0 5px;
+}
+
+.suggestion small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* MESSAGES */
+
+.message {
+  display: flex;
+  gap: 13px;
+  margin-bottom: 27px;
+  animation: appear .3s ease;
+}
+
+.message.user { flex-direction: row-reverse; }
+
+.message-avatar {
+  flex-shrink: 0;
+  width: 31px;
+  height: 31px;
+  border-radius: 10px;
+  background: linear-gradient(135deg,#8b5cf6,#6366f1);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.message.user .message-avatar {
+  background: #242938;
+}
+
+.message-body {
+  max-width: 85%;
+  min-width: 0;
+}
+
+.message-name {
+  color: #9ba2b3;
+  font-size: 10px;
+  margin-bottom: 8px;
+}
+
+.message-text {
+  font-size: 13px;
+  line-height: 1.85;
+  color: #e0e3ec;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.message.user .message-text {
+  background: #191d29;
+  padding: 13px 16px;
+  border-radius: 13px 4px 13px 13px;
+}
+
+.typing {
+  color: var(--accent);
+  font-size: 12px;
+  padding: 8px 0;
+}
+
+/* INPUT */
+
+.input-section {
+  padding: 15px 18px 22px;
+}
+
+.input-wrapper {
+  max-width: 790px;
+  margin: auto;
+  background: #141720;
+  border: 1px solid #ffffff17;
+  border-radius: 17px;
+  padding: 12px;
+  box-shadow: 0 10px 50px #0005;
+  transition: .2s;
+}
+
+.input-wrapper:focus-within {
+  border-color: #a78bfa85;
+  box-shadow: 0 0 25px #8b5cf615;
+}
+
+#prompt {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  color: white;
+  font-size: 13px;
+  padding: 7px;
+  max-height: 150px;
+  min-height: 35px;
+}
+
+#prompt::placeholder { color: #777e90; }
+
+.input-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 3px 0;
+}
+
+.input-tools {
+  display: flex;
+  gap: 8px;
+  color: #777e90;
+  font-size: 10px;
+  align-items: center;
+}
+
+.send-btn {
+  width: 37px;
+  height: 37px;
+  background: linear-gradient(135deg,#a78bfa,#6366f1);
+  color: white;
+  border: none;
+  border-radius: 11px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.send-btn:hover { filter: brightness(1.15); }
+
+.disclaimer {
+  text-align: center;
+  color: #62697a;
+  font-size: 9px;
+  margin-top: 12px;
+}
+
+@media(max-width:700px) {
+  .sidebar {
+    position: fixed;
+    z-index: 10;
+    left: -270px;
+    top: 0;
+    bottom: 0;
+    height: 100%;
+  }
+  .sidebar.open { left: 0; }
+  .topbar { padding: 0 15px; }
+  .welcome { padding-top: 8vh; }
+  .suggestions { gap: 8px; margin-top: 30px; }
+  .suggestion { padding: 12px; }
+  .input-section { padding: 10px 12px 15px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<aside class="sidebar" id="sidebar">
+
+  <div class="brand">
+    <div class="brand-icon">P</div>
+    <div class="brand-name">PRUMIM<span>.</span></div>
+  </div>
+
+  <button class="new-chat" onclick="newChat()">
+    <i data-lucide="plus"></i>
+    New conversation
+  </button>
+
+  <div class="section-label">YOUR WORKSPACE</div>
+  <div class="history" id="history"></div>
+
+  <div class="sidebar-bottom">
+    <div class="profile">
+      <div class="avatar">P</div>
+      <div>
+        <strong style="font-size:12px">Personal workspace</strong>
+        <small>Agent Assistant</small>
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+<main class="main">
+
+  <header class="topbar">
+    <div class="top-left">
+      <button class="icon-btn" onclick="toggleSidebar()">
+        <i data-lucide="panel-left"></i>
+      </button>
+      <div>
+        <div class="model-name">PRUMIM Intelligence</div>
+        <div class="model-status">
+          <span class="dot"></span>
+          Assistant interface ready
+        </div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button class="icon-btn" onclick="newChat()" title="New chat">
+        <i data-lucide="square-pen"></i>
+      </button>
+      <button class="icon-btn" onclick="clearHistory()" title="Clear history">
+        <i data-lucide="trash-2"></i>
+      </button>
+    </div>
+  </header>
+
+  <section class="chat-area" id="chatArea">
+    <div class="chat-content" id="chatContent">
+
+      <div class="welcome" id="welcome">
+
+        <div class="orb"></div>
+
+        <h1>Think beyond.<br><span class="gradient">Meet PRUMIM.</span></h1>
+
+        <p>
+          Your intelligent workspace. Think, create, discover
+          and build with an AI assistant designed for more.
+        </p>
+
+        <div class="suggestions">
+
+          <button class="suggestion" onclick="useSuggestion('Help me build a powerful AI agent')">
+            <i data-lucide="bot"></i>
+            <strong>Build something</strong>
+            <small>Create an intelligent project</small>
+          </button>
+
+          <button class="suggestion" onclick="useSuggestion('Teach me something interesting about artificial intelligence')">
+            <i data-lucide="brain"></i>
+            <strong>Learn something</strong>
+            <small>Explore new knowledge</small>
+          </button>
+
+          <button class="suggestion" onclick="useSuggestion('Give me five creative business ideas')">
+            <i data-lucide="lightbulb"></i>
+            <strong>Get inspired</strong>
+            <small>Explore fresh ideas</small>
+          </button>
+
+          <button class="suggestion" onclick="useSuggestion('Write a professional website for my business')">
+            <i data-lucide="code"></i>
+            <strong>Create with AI</strong>
+            <small>Turn ideas into reality</small>
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="input-section">
+
+    <div class="input-wrapper">
+
+      <textarea
+        id="prompt"
+        placeholder="Message PRUMIM..."
+        rows="1"
+        onkeydown="handleKey(event)"
+      ></textarea>
+
+      <div class="input-bottom">
+        <div class="input-tools">
+          <i data-lucide="sparkles" style="width:14px"></i>
+          <span>Powered by Groq architecture</span>
+        </div>
+
+        <button class="send-btn" onclick="sendMessage()" id="sendBtn">
+          <i data-lucide="arrow-up"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="disclaimer">
+      ctech AI can make mistakes. Verify important information.
+    </div>
+
+  </section>
+
+</main>
+</div>
+
+<script>
+let conversations = JSON.parse(
+  localStorage.getItem("ctech_chats") || "[]"
+);
+
+let activeChat = null;
+let busy = false;
+
+function saveChats() {
+  localStorage.setItem(
+    "prumim_chats",
+    JSON.stringify(conversations)
+  );
+}
+
+function newChat() {
+  activeChat = null;
+  document.getElementById("chatContent").innerHTML = `
+    <div class="welcome" id="welcome">
+      <div class="orb"></div>
+      <h1>Think beyond.<br><span class="gradient">Meet PRUMIM.</span></h1>
+      <p>Your intelligent workspace. Think, create, discover and build with an AI assistant designed for more.</p>
+      <div class="suggestions">
+        <button class="suggestion" onclick="useSuggestion('Help me build a powerful AI agent')"><i data-lucide="bot"></i><strong>Build something</strong><small>Create an intelligent project</small></button>
+        <button class="suggestion" onclick="useSuggestion('Teach me something interesting about artificial intelligence')"><i data-lucide="brain"></i><strong>Learn something</strong><small>Explore new knowledge</small></button>
+        <button class="suggestion" onclick="useSuggestion('Give me five creative business ideas')"><i data-lucide="lightbulb"></i><strong>Get inspired</strong><small>Explore fresh ideas</small></button>
+        <button class="suggestion" onclick="useSuggestion('Write a professional website for my business')"><i data-lucide="code"></i><strong>Create with AI</strong><small>Turn ideas into reality</small></button>
+      </div>
+    </div>`;
+  renderHistory();
+  lucide.createIcons();
+}
+
+function useSuggestion(value) {
+  document.getElementById("prompt").value = value;
+  sendMessage();
+}
+
+function handleKey(event) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    sendMessage();
+  }
+}
+
+function createMessage(role, content) {
+  const wrap = document.createElement("div");
+  wrap.className = "message " + role;
+
+  const avatar = document.createElement("div");
+  avatar.className = "message-avatar";
+  avatar.textContent = role === "user" ? "Y" : "P";
+
+  const body = document.createElement("div");
+  body.className = "message-body";
+
+  const name = document.createElement("div");
+  name.className = "message-name";
+  name.textContent = role === "user" ? "YOU" : "PRUMIM";
+
+  const text = document.createElement("div");
+  text.className = "message-text";
+  text.textContent = content;
+
+  body.append(name, text);
+  wrap.append(avatar, body);
+
+  document.getElementById("chatContent").appendChild(wrap);
+  scrollBottom();
+
+  return text;
+}
+
+function scrollBottom() {
+  const area = document.getElementById("chatArea");
+  area.scrollTop = area.scrollHeight;
+}
+
+async function sendMessage() {
+  if (busy) return;
+
+  const input = document.getElementById("prompt");
+  const prompt = input.value.trim();
+
+  if (!prompt) return;
+
+  input.value = "";
+
+  if (!activeChat) {
+    activeChat = {
+      id: Date.now(),
+      title: prompt.slice(0, 35),
+      messages: []
+    };
+    conversations.unshift(activeChat);
+  }
+
+  document.getElementById("welcome")?.remove();
+
+  activeChat.messages.push({
+    role: "user",
+    content: prompt
+  });
+
+  createMessage("user", prompt);
+
+  saveChats();
+  renderHistory();
+
+  const typing = document.createElement("div");
+  typing.className = "typing";
+  typing.textContent = "PRUMIM is thinking...";
+  document.getElementById("chatContent").appendChild(typing);
+
+  busy = true;
+  document.getElementById("sendBtn").disabled = true;
+
+  try {
+    // Groq connection will be implemented in api/chat.js.
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        messages: activeChat.messages
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "AI service unavailable");
+    }
+
+    typing.remove();
+
+    const answer = data.reply || "I couldn't generate a response.";
+
+    activeChat.messages.push({
+      role: "assistant",
+      content: answer
+    });
+
+    createMessage("assistant", answer);
+
+    saveChats();
+    renderHistory();
+
+  } catch (error) {
+    typing.remove();
+    createMessage(
+      "assistant",
+      "Connection error: " + error.message +
+      "\n\nMake sure the Groq backend is installed and configured."
+    );
+  } finally {
+    busy = false;
+    document.getElementById("sendBtn").disabled = false;
+    scrollBottom();
+  }
+}
+
+function renderHistory() {
+  const history = document.getElementById("history");
+  history.innerHTML = "";
+
+  conversations.forEach(chat => {
+    const item = document.createElement("div");
+    item.className = "history-item";
+    item.textContent = "◈  " + chat.title;
+    item.onclick = () => loadChat(chat.id);
+    history.appendChild(item);
+  });
+}
+
+function loadChat(id) {
+  const chat = conversations.find(c => c.id === id);
+  if (!chat) return;
+
+  activeChat = chat;
+
+  const content = document.getElementById("chatContent");
+  content.innerHTML = "";
+
+  chat.messages.forEach(message => {
+    createMessage(
+      message.role === "user" ? "user" : "assistant",
+      message.content
+    );
+  });
+
+  scrollBottom();
+  document.getElementById("sidebar").classList.remove("open");
+}
+
+function clearHistory() {
+  if (!confirm("Delete all saved conversations?")) return;
+
+  conversations = [];
+  activeChat = null;
+  saveChats();
+  newChat();
+}
+
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("open");
+}
+
+renderHistory();
+lucide.createIcons();
+</script>
+
+</body>
+</html>
